@@ -1,7 +1,8 @@
 // user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 
 @Entity()
+@Unique(["username"])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
