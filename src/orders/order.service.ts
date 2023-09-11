@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from 'src/entities/order.entity';
+// import { Order } from 'src/entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
@@ -21,13 +22,13 @@ export class OrderService {
   }
   
   
-  async create(createOrderDto: CreateOrderDto): Promise<Order> {
-    const order = new Order();
-    order.user = createOrderDto.userId; 
-    order.product = createOrderDto.productId
+  // async create(createOrderDto: CreateOrderDto): Promise<Order> {
+  //   const order = new Order();
+  //   order.user = createOrderDto.userId; 
+  //   order.product = createOrderDto.productId
   
-    return this.orderRepository.save(order);
-  }
+  //   return this.orderRepository.save(order);
+  // }
   
   
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | undefined> {

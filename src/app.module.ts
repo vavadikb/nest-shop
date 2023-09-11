@@ -8,19 +8,20 @@ import { Product } from './entities/product.entity';
 import { dataSourseOptions } from './database/data-source-migration';
 import { OrderController } from './orders/order.controller';
 import { OrderService } from './orders/order.service';
-import { CartItemService } from './cart-item/cart-item.service';
-import { CartItemController } from './cart-item/cart-item.controller';
+import { CartService } from './cart-item/cart.service';
+import { CartController } from './cart-item/cart.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { User } from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/auth.strategy';
+import { Cart } from './entities/cart.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourseOptions),
-    TypeOrmModule.forFeature([Product, User]),
+    TypeOrmModule.forFeature([Product, User, Cart]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
@@ -28,7 +29,7 @@ import { LocalStrategy } from './auth/auth.strategy';
       signOptions: { expiresIn: '1h' }, 
     }),
   ],
-  controllers: [AppController, ProductsController, AuthController],
-  providers: [AppService, ProductsService, AuthService, LocalStrategy],
+  controllers: [AppController, ProductsController, AuthController, CartController],
+  providers: [AppService, ProductsService, AuthService, LocalStrategy, CartService],
 })
 export class AppModule {}

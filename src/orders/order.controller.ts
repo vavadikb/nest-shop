@@ -17,10 +17,10 @@ export class OrderController {
     return this.orderService.findOne(id);
   }
 
-  @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderService.create(createOrderDto);
-  }
+  // @Post()
+  // create(@Body() createOrderDto: CreateOrderDto) {
+  //   return this.orderService.create(createOrderDto);
+  // }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() updateOrderDto: UpdateOrderDto) {
