@@ -5,12 +5,12 @@ import { User } from 'src/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService, private registrationService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
 
   @Post('register')
   async register(@Body() user: User): Promise<User> {
-    return this.registrationService.register(user);
+    return this.authService.register(user);
   }
 
   @Post('login')

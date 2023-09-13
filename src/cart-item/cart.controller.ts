@@ -17,7 +17,7 @@ import { AuthGuard } from 'src/auth/local-auth.guard';
 export class CartController {
   constructor(
     private readonly cartItemService: CartService,
-    private readonly jwtService: JwtService, // Добавляем jwtService в конструктор
+    private readonly jwtService: JwtService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -29,7 +29,6 @@ export class CartController {
       try {
         const decodedToken = this.jwtService.verify(token);
         const userId = decodedToken.id;
-        console.log('user id: ', userId, 'product id', decodedToken);
         return this.cartItemService.getCartItems(userId);
       } catch (error) {
         throw new Error('Bad token');
@@ -48,7 +47,6 @@ export class CartController {
       try {
         const decodedToken = this.jwtService.verify(token);
         const userId = decodedToken.id;
-        console.log(userId, productId);
         return this.cartItemService.addToCart(userId, productId);
       } catch (error) {
         throw new Error('Bad token');
@@ -66,4 +64,18 @@ export class CartController {
     await this.cartItemService.removeFromCart(cartItemId);
   }
 
+  @Delete('/remove-all')
+  async removeAllItemsForUser(@Req() req): Promise<void> {
+    const [type, token] = (req.headers.authorization || '').split(' ');
+
+    if (type === 'Bearer') {
+      try {
+        const decodedToken = this.jwtService.verify(token);
+        const userId = decodedToken.id;
+        await this.cartItemService.removeAllItemsForUser(userId);
+      } catch (error) {
+        throw new Error('Bad token');
+      }
+    }
+  }
 }
