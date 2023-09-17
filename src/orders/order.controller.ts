@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, Put, Delete,Req, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { Order } from 'src/entities/order.entity';
+import { AuthGuard } from 'src/auth/local-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('orders')
+@UseGuards(AuthGuard)
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(private readonly orderService: OrderService, private readonly jwtService: JwtService,) {}
 
-  @Get()
-  findAll() {
-    return this.orderService.findAll();
+  @Post('/create')
+  async createOrder(@Req() req): Promise<void> {
+    const [type, token] = (req.headers.authorization || '').split(' ');
+
+    if (type === 'Bearer') {
+      try {
+        const decodedToken = this.jwtService.verify(token);
+        const userId = decodedToken.id;
+        return    await this.orderService.createOrder(parseInt(userId, 10));
+      } catch (error) {
+        throw new Error('Bad token');
+      }
+    }
+
+    throw new Error('Error type autorization');
+  }
+  
+
+  @Get('/user')
+  async getUserOrders(@Req() req): Promise<Order[]> {
+    const [type, token] = (req.headers.authorization || '').split(' ');
+
+    if (type === 'Bearer') {
+      try {
+        const decodedToken = this.jwtService.verify(token);
+        const userId = decodedToken.id;
+        return  await this.orderService.getUserOrders(userId)
+      } catch (error) {
+        throw new Error('Bad token');
+      }
+    }
+
+    throw new Error('Error type autorization');
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.orderService.findOne(id);
+  @Put('/update-order')
+  async updateOrderStatus(
+    @Param('orderId') orderId: string,
+    @Param('status') status: string,
+  ): Promise<void> {
+    await this.orderService.updateOrderStatus(parseInt(orderId, 10), status);
   }
 
-  // @Post()
-  // create(@Body() createOrderDto: CreateOrderDto) {
-  //   return this.orderService.create(createOrderDto);
-  // }
-
-  @Put(':id')
-  update(@Param('id') id: number, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.orderService.update(id, updateOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.orderService.remove(id);
+  @Delete(':orderId')
+  async deleteOrder(@Param('orderId') orderId: string): Promise<void> {
+    await this.orderService.deleteOrder(parseInt(orderId, 10));
   }
 }

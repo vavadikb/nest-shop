@@ -1,46 +1,61 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from 'src/entities/order.entity';
-// import { Order } from 'src/entities/order.entity';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { Cart } from 'src/entities/cart.entity';
+import { Product } from 'src/entities/product.entity';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(Cart)
+    private readonly cartItemRepository: Repository<Cart>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
   ) {}
 
-  async findAll(): Promise<Order[]> {
-    return this.orderRepository.find();
+  async createOrder(userId: number): Promise<void> {
+    const cartItems = await this.cartItemRepository.find({
+      where: { user: { id: userId } },
+    });
+
+    const orders = cartItems.map((cartItem) => {
+      const order = new Order();
+      order.user = cartItem.user;
+      order.product = cartItem.product;
+      order.status = 'In shipping';
+      return order;
+    });
+
+    await this.orderRepository.save(orders);
+    await this.cartItemRepository.remove(cartItems);
+  }
+  async getUserOrders(userId: number): Promise<Order[]> {
+    return await this.orderRepository.find({ where: { user: { id: userId } } });
   }
 
-  async findOne(id: number): Promise<Order | undefined> {
-    return this.orderRepository.findOneOrFail({ where: { id } });
-  }
-  
-  
-  // async create(createOrderDto: CreateOrderDto): Promise<Order> {
-  //   const order = new Order();
-  //   order.user = createOrderDto.userId; 
-  //   order.product = createOrderDto.productId
-  
-  //   return this.orderRepository.save(order);
-  // }
-  
-  
-  async update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | undefined> {
-    const partialOrder: Partial<Order> = {};
-  
-    await this.orderRepository.update(id, partialOrder);
-  
-    return this.orderRepository.findOneOrFail({ where: { id } });
-  }
-  
+  async updateOrderStatus(orderId: number, status: string): Promise<void> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
 
-  async remove(id: number): Promise<void> {
-    await this.orderRepository.delete(id);
+    order.status = status;
+    await this.orderRepository.save(order);
+  }
+
+  async deleteOrder(orderId: number): Promise<void> {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+
+    await this.orderRepository.remove(order);
   }
 }

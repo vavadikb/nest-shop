@@ -64,6 +64,8 @@ export class CartController {
     await this.cartItemService.removeFromCart(cartItemId);
   }
 
+
+  @UseGuards(AuthGuard)
   @Delete('/remove-all')
   async removeAllItemsForUser(@Req() req): Promise<void> {
     const [type, token] = (req.headers.authorization || '').split(' ');

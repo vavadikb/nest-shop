@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { User } from './user.entity';
 import { Product } from './product.entity';
 
@@ -14,4 +14,7 @@ export class Order {
   @ManyToOne(() => Product)
   @JoinColumn({ name: 'product_id' })
   product: Product;
+
+  @Column({ type: 'varchar', length: 255 }) // Добавляем поле status
+  status: string;
 }
