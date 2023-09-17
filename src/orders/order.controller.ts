@@ -17,7 +17,7 @@ export class OrderController {
       try {
         const decodedToken = this.jwtService.verify(token);
         const userId = decodedToken.id;
-        return    await this.orderService.createOrder(parseInt(userId, 10));
+        return await this.orderService.createOrder(userId);
       } catch (error) {
         throw new Error('Bad token');
       }
@@ -27,7 +27,7 @@ export class OrderController {
   }
   
 
-  @Get('/user')
+  @Get('')
   async getUserOrders(@Req() req): Promise<Order[]> {
     const [type, token] = (req.headers.authorization || '').split(' ');
 
@@ -44,14 +44,14 @@ export class OrderController {
     throw new Error('Error type autorization');
   }
 
-  @Put('/update-order')
+  @Put('/update-order/:orderId/:status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,
     @Param('status') status: string,
   ): Promise<void> {
     await this.orderService.updateOrderStatus(parseInt(orderId, 10), status);
   }
-
+  
   @Delete(':orderId')
   async deleteOrder(@Param('orderId') orderId: string): Promise<void> {
     await this.orderService.deleteOrder(parseInt(orderId, 10));

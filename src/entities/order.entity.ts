@@ -15,6 +15,6 @@ export class Order {
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
-  @Column({ type: 'varchar', length: 255 }) // Добавляем поле status
+  @Column({ type: 'varchar', length: 255 })
   status: string;
 }

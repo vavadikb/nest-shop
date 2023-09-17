@@ -1,12 +1,11 @@
 import 'reflect-metadata';
-import { Product } from 'src/entities/product.entity';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from 'src/entities/user.entity';
-import { CartItem } from 'src/entities/cart-item.entity';
 import { Cart } from 'src/entities/cart.entity';
+import { Product } from 'src/entities/product.entity';
+import { Order } from 'src/entities/order.entity';
 
 // import { Country } from '../country/country.entity';
 // import { Exchange } from '../exchange/exchange.entity';
@@ -44,7 +43,7 @@ export const dataSourseOptions:DataSourceOptions =  {
       username: 'myuser',
       password: 'mypassword',
       database: 'mydatabase',
-      entities: [Product, User, Cart], 
+      entities: [Product, User, Cart, Order], 
       migrations: [__dirname +'/migrations/*.ts'],
       synchronize: true,
 }

@@ -17,9 +17,12 @@ export class OrderService {
   ) {}
 
   async createOrder(userId: number): Promise<void> {
-    const cartItems = await this.cartItemRepository.find({
-      where: { user: { id: userId } },
-    });
+    const cartItems = await this.cartItemRepository
+    .createQueryBuilder('cartItem')
+    .leftJoinAndSelect('cartItem.user', 'user')
+    .leftJoinAndSelect('cartItem.product', 'product')
+    .where('cartItem.user.id = :userId', { userId })
+    .getMany();
 
     const orders = cartItems.map((cartItem) => {
       const order = new Order();
@@ -28,7 +31,7 @@ export class OrderService {
       order.status = 'In shipping';
       return order;
     });
-
+    
     await this.orderRepository.save(orders);
     await this.cartItemRepository.remove(cartItems);
   }

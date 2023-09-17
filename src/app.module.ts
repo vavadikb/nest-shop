@@ -17,11 +17,12 @@ import { User } from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/auth.strategy';
 import { Cart } from './entities/cart.entity';
+import { Order } from './entities/order.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourseOptions),
-    TypeOrmModule.forFeature([Product, User, Cart]),
+    TypeOrmModule.forFeature([Product, User, Cart, Order]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       global: true,
@@ -29,7 +30,7 @@ import { Cart } from './entities/cart.entity';
       signOptions: { expiresIn: '1h' }, 
     }),
   ],
-  controllers: [AppController, ProductsController, AuthController, CartController],
-  providers: [AppService, ProductsService, AuthService, LocalStrategy, CartService],
+  controllers: [AppController, ProductsController, AuthController, CartController, OrderController],
+  providers: [AppService, ProductsService, AuthService, LocalStrategy, CartService, OrderService],
 })
 export class AppModule {}
