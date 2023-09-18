@@ -3,7 +3,6 @@ import {
   Get,
   UseGuards,
   Post,
-  Body,
   Req,
   Param,
   Delete,
@@ -14,50 +13,30 @@ import {
 import { CartService } from './cart.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/local-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('cart-items')
 export class CartController {
   constructor(
     private readonly cartItemService: CartService,
     private readonly jwtService: JwtService,
+    private readonly authService: AuthService
   ) {}
 
   @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK) 
   async getCartItems(@Req() req) {
-    const [type, token] = (req.headers.authorization || '').split(' ');
-
-    if (type === 'Bearer') {
-      try {
-        const decodedToken = this.jwtService.verify(token);
-        const userId = decodedToken.id;
-        return this.cartItemService.getCartItems(userId);
-      } catch (error) {
-        throw new Error('Bad token');
-      }
-    }
-
-    throw new Error('Error type authorization');
+    const userId = this.authService.getUserIdFromToken(req.headers.authorization)
+    return this.cartItemService.getCartItems(userId);
   }
 
   @UseGuards(AuthGuard)
   @Post('add/:product_id')
   @HttpCode(HttpStatus.CREATED)
   async addToCart(@Req() req, @Param('product_id') productId: number) {
-    const [type, token] = (req.headers.authorization || '').split(' ');
-
-    if (type === 'Bearer') {
-      try {
-        const decodedToken = this.jwtService.verify(token);
-        const userId = decodedToken.id;
-        return this.cartItemService.addToCart(userId, productId);
-      } catch (error) {
-        throw new Error('Bad token');
-      }
-    }
-
-    throw new Error('Error type authorization');
+    const userId = this.authService.getUserIdFromToken(req.headers.authorization)
+    return this.cartItemService.addToCart(userId, productId);
   }
 
   @UseGuards(AuthGuard)
@@ -73,16 +52,7 @@ export class CartController {
   @Delete('/remove-all')
   @HttpCode(HttpStatus.NO_CONTENT) 
   async removeAllItemsForUser(@Req() req): Promise<void> {
-    const [type, token] = (req.headers.authorization || '').split(' ');
-
-    if (type === 'Bearer') {
-      try {
-        const decodedToken = this.jwtService.verify(token);
-        const userId = decodedToken.id;
-        await this.cartItemService.removeAllItemsForUser(userId);
-      } catch (error) {
-        throw new Error('Bad token');
-      }
-    }
+    const userId = this.authService.getUserIdFromToken(req.headers.authorization)
+    await this.cartItemService.removeAllItemsForUser(userId);
   }
 }

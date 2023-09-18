@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -44,5 +44,20 @@ export class AuthService {
   async register(user: User): Promise<User> {
     const newUser = await this.userRepository.create(user);
     return this.userRepository.save(newUser);
+  }
+
+  getUserIdFromToken(token: string): number {
+    const [type, jwtToken] = (token || '').split(' ');
+
+    if (type === 'Bearer') {
+      try {
+        const decodedToken = this.jwtService.verify(jwtToken);
+        return decodedToken.id;
+      } catch (error) {
+        throw new UnauthorizedException('Bad token');
+      }
+    }
+
+    throw new UnauthorizedException('Error type authorization');
   }
 }
