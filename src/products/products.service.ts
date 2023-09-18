@@ -43,6 +43,7 @@ export class ProductsService {
 
   async remove(id: number): Promise<void> {
     const existingProduct = await this.productRepository.findOneOrFail({ where: { id } });
+    console.log(existingProduct)
     if (!existingProduct) {
       throw new NotFoundException('Product not found');
     }

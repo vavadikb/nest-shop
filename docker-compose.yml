@@ -4,7 +4,7 @@ services:
     image: postgres:latest
     container_name: my_postgres
     environment:
-      POSTGRES_DB: mydatabase
+      POSTGRES_DB: online_store_db
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
     ports:
