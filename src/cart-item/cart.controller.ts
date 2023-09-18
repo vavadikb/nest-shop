@@ -8,6 +8,8 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { JwtService } from '@nestjs/jwt';
@@ -22,6 +24,7 @@ export class CartController {
 
   @UseGuards(AuthGuard)
   @Get()
+  @HttpCode(HttpStatus.OK) 
   async getCartItems(@Req() req) {
     const [type, token] = (req.headers.authorization || '').split(' ');
 
@@ -35,11 +38,12 @@ export class CartController {
       }
     }
 
-    throw new Error('Error type autorization');
+    throw new Error('Error type authorization');
   }
 
   @UseGuards(AuthGuard)
   @Post('add/:product_id')
+  @HttpCode(HttpStatus.CREATED)
   async addToCart(@Req() req, @Param('product_id') productId: number) {
     const [type, token] = (req.headers.authorization || '').split(' ');
 
@@ -53,20 +57,21 @@ export class CartController {
       }
     }
 
-    throw new Error('Error type autorization');
+    throw new Error('Error type authorization');
   }
 
   @UseGuards(AuthGuard)
   @Delete('/remove/:cartItemId')
+  @HttpCode(HttpStatus.NO_CONTENT) 
   async removeFromCart(
     @Param('cartItemId', ParseIntPipe) cartItemId: number,
   ): Promise<void> {
     await this.cartItemService.removeFromCart(cartItemId);
   }
 
-
   @UseGuards(AuthGuard)
   @Delete('/remove-all')
+  @HttpCode(HttpStatus.NO_CONTENT) 
   async removeAllItemsForUser(@Req() req): Promise<void> {
     const [type, token] = (req.headers.authorization || '').split(' ');
 
