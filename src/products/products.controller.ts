@@ -3,12 +3,11 @@ import { ProductsService } from './products.service';
 import { Product } from '../entities/product.entity';
 import { AuthGuard } from 'src/auth/local-auth.guard';
 
-
 @Controller('products')
+@UseGuards(AuthGuard)
 export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
-  @UseGuards(AuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() product: Product): Promise<Product> {
@@ -16,7 +15,6 @@ export class ProductsController {
     return createdProduct;
   }
 
-  @UseGuards(AuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   async update(@Param('id', ParseIntPipe) id: number, @Body() product: Product): Promise<Product> {
@@ -24,7 +22,6 @@ export class ProductsController {
     return updatedProduct;
   }
   
-  @UseGuards(AuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK) 
   async findAll(): Promise<Product[]> {
@@ -32,7 +29,6 @@ export class ProductsController {
     return products;
   }
 
-  @UseGuards(AuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK) 
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
@@ -40,7 +36,6 @@ export class ProductsController {
     return product;
   }
 
-  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
