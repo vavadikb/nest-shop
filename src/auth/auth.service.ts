@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException, HttpStatus, HttpException} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,23 +22,21 @@ export class AuthService {
 
     return null;
   }
-  async findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async findOne(id:number): Promise<User>{
-    try {
-      return await this.userRepository.findOneOrFail({ where: { id } });
-    } catch (error) {
-      throw new NotFoundException('User not found');
-    }
-  }
 
   async login(user: User) {
-    const id = (await this.userRepository.findOne( {where:{ username:user.username}})).id
-    const payload = { id };
-    const access_token = this.jwtService.sign(payload);
-    return { access_token };
+    try {
+      const foundUser = await this.userRepository.findOne({ where: { username: user.username } });
+
+      if (!foundUser) {
+        throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
+      }
+
+      const payload = { id: foundUser.id };
+      const access_token = this.jwtService.sign(payload);
+      return { access_token };
+    } catch (error) {
+      throw new HttpException('Error while logging in', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async register(user: User): Promise<User> {

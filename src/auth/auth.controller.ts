@@ -1,6 +1,5 @@
-import { Controller, Post, UseGuards, Request, Body, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Request, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './local-auth.guard';
 import { User } from 'src/entities/user.entity';
 
 @Controller('auth')
@@ -19,10 +18,4 @@ export class AuthController {
     return this.authService.login(req.body.user);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('users')
-  @HttpCode(HttpStatus.OK) 
-  findAll(): Promise<User[]> {
-    return this.authService.findAll();
-  }
 }

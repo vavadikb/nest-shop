@@ -18,6 +18,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './auth/auth.strategy';
 import { Cart } from './entities/cart.entity';
 import { Order } from './entities/order.entity';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { Order } from './entities/order.entity';
       signOptions: { expiresIn: '1h' }, 
     }),
   ],
-  controllers: [AppController, ProductsController, AuthController, CartController, OrderController],
-  providers: [AppService, ProductsService, AuthService, LocalStrategy, CartService, OrderService],
+  controllers: [AppController, ProductsController, AuthController, CartController, OrderController, UserController],
+  providers: [AppService, ProductsService, AuthService, LocalStrategy, CartService, OrderService, UserService],
 })
 export class AppModule {}

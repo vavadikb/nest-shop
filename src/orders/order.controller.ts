@@ -3,7 +3,6 @@ import {
   Post,
   Get,
   Param,
-  Body,
   Put,
   Delete,
   Req,
@@ -14,7 +13,6 @@ import {
 import { OrderService } from './order.service';
 import { Order } from 'src/entities/order.entity';
 import { AuthGuard } from 'src/auth/local-auth.guard';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from 'src/auth/auth.service';
 
 @Controller('orders')
@@ -22,7 +20,6 @@ import { AuthService } from 'src/auth/auth.service';
 export class OrderController {
   constructor(
     private readonly orderService: OrderService,
-    private readonly jwtService: JwtService,
     private readonly authService: AuthService
   ) {}
 

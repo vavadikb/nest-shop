@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from 'src/entities/cart.entity';
-import { AuthService } from 'src/auth/auth.service';
 import { ProductsService } from 'src/products/products.service';
+import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -11,13 +11,13 @@ export class CartService {
     constructor(
       @InjectRepository(Cart)
       private readonly cartRepository: Repository<Cart>,
-      private authService: AuthService,
-      private productService: ProductsService
+      private productService: ProductsService,
+      private userService: UserService
     ) {}
   
     async addToCart(userId: number, productId: number): Promise<Cart> {
       const cartItem = new Cart();
-      cartItem.user = await this.authService.findOne(userId)
+      cartItem.user = await this.userService.findOne(userId)
       cartItem.product = await this.productService.findOne(productId);
       return await this.cartRepository.save(cartItem);
     }

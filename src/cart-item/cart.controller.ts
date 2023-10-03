@@ -11,7 +11,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from 'src/auth/local-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 
@@ -20,7 +19,6 @@ import { AuthService } from 'src/auth/auth.service';
 export class CartController {
   constructor(
     private readonly cartItemService: CartService,
-    private readonly jwtService: JwtService,
     private readonly authService: AuthService
   ) {}
 
@@ -31,7 +29,7 @@ export class CartController {
     return this.cartItemService.getCartItems(userId);
   }
 
-  @Post('add/:product_id')
+  @Post('add/:productId')
   @HttpCode(HttpStatus.CREATED)
   async addToCart(@Req() req, @Param('product_id') productId: number) {
     const userId = this.authService.getUserIdFromToken(req.headers.authorization)
