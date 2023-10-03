@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, UseGuard
 import { ProductsService } from './products.service';
 import { Product } from '../entities/product.entity';
 import { AuthGuard } from 'src/auth/local-auth.guard';
+import { ProductDto } from './dto/product.dto';
 
 @Controller('products')
 @UseGuards(AuthGuard)
@@ -14,10 +15,11 @@ export class ProductsController {
     const createdProduct = await this.productService.create(product);
     return createdProduct;
   }
+  
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  async update(@Param('id', ParseIntPipe) id: number, @Body() product: Product): Promise<Product> {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() product: ProductDto ): Promise<Product> {
     const updatedProduct = await this.productService.update(id, product);
     return updatedProduct;
   }
