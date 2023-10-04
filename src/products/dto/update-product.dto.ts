@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, MaxLength, IsOptional } from 'class-validator';
 
-export class ProductDto {
+export class UpdateProductDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(30) 
@@ -14,4 +14,7 @@ export class ProductDto {
   @IsNumber()
   readonly price: number;
 
+  @IsOptional()
+  @IsNumber()
+  id: number;
 }
