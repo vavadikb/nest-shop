@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import * as argon2 from 'argon2';
+import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User) {
+  async login(user: AuthDto) {
     try {
       const foundUser = await this.userRepository.findOne({ where: { username: user.username } });
 
@@ -39,7 +40,7 @@ export class AuthService {
     }
   }
 
-  async register(user: User): Promise<User> {
+  async register(user: AuthDto): Promise<User> {
     const newUser = await this.userRepository.create(user);
     return this.userRepository.save(newUser);
   }

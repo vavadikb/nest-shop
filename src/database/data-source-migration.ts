@@ -17,7 +17,7 @@ export const dataSourseOptions:DataSourceOptions =  {
       database: process.env.PG_DATABASE,
       entities: [Product, User, Cart, Order], 
       migrations: [],
-      synchronize: true,
+      synchronize: false,
 }
 
 const dataSource = new DataSource(dataSourseOptions)
